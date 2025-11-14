@@ -9,20 +9,21 @@ const app = express();
 dotenv.config();
 
 // middleware
+const allowedOrigins = [
+  process.env.FE_PRODUCTION_HOST,
+  process.env.FE_LOCAL_HOST,
+];
 app.use(
   cors({
-    origin: function (orgin, callback) {
-      const allowedOrigins = [
-        process.env.FE_LOCAL_HOST,
-        process.env.FE_PRODUCTION_HOST,
-      ];
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed Cors"));
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["POST", "PUT", "DELETE", "GET"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
