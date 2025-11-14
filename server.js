@@ -9,9 +9,14 @@ const app = express();
 dotenv.config();
 
 // middleware
+const allowedOrigins = [
+  process.env.FE_LOCAL_HOST,
+  process.env.FE_PRODUCTION_HOST,
+];
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
+    methods: ["POST", "PUT", "DELETE", "GET"],
     credentials: true,
   })
 );
