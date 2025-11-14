@@ -29,5 +29,4 @@ app.use("/project", projectRouter);
 
 app.listen(port, () => {
   connection();
-  console.log(`running port: ${port}`);
 });
