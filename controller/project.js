@@ -44,7 +44,7 @@ export const createProject = async (req, res) => {
 // read projects
 export const getProjects = async (req, res) => {
   try {
-    const fetchingProj = await Project.find();
+    const fetchingProj = await Project.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: fetchingProj,
