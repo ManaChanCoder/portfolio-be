@@ -1,5 +1,6 @@
 import { Account } from "../model/accountSchema.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const registerAccount = async (req, res) => {
   const { username, password, role, email } = req.body;
@@ -18,10 +19,18 @@ export const registerAccount = async (req, res) => {
   };
 
   try {
-    await Account.create(userData);
+    const newUser = await Account.create(userData);
+
+    const token = jwt.sign(
+      { id: newUser._id }, // payload
+      process.env.JWT_SECRET, // Secret key
+      { expiresIn: process.env.JWT_EXPIRES_IN } //1 day expiration
+    );
+
     res.status(201).json({
       success: true,
       message: "Account registered successfully",
+      token: token,
     });
   } catch (error) {
     res.status(500).json({
@@ -30,6 +39,8 @@ export const registerAccount = async (req, res) => {
     });
   }
 };
+
+// edit password
 export const editPassword = async (req, res) => {
   const { username, oldPassword, newPassword } = req.body;
 
@@ -62,6 +73,7 @@ export const editPassword = async (req, res) => {
     });
   }
 };
+
 // login
 export const loginAccount = async (req, res) => {
   const { username, password } = req.body;
@@ -90,10 +102,18 @@ export const loginAccount = async (req, res) => {
         message: "Invalid password",
       });
     }
+
+    const token = jwt.sign(
+      { id: user._id }, // payload
+      process.env.JWT_SECRET, // Secret key
+      { expiresIn: process.env.JWT_EXPIRES_IN } //1 day expiration
+    );
+
     res.status(200).json({
       success: true,
       message: "Login successful",
       username: user.username,
+      token: token,
     });
   } catch (error) {
     if (error.name === "ValidationError") {
