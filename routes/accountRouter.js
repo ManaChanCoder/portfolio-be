@@ -5,6 +5,7 @@ import {
   loginAccount,
 } from "../controller/user.js";
 import { protect } from "../middleware/protect.js";
+import contactForm from "../middleware/contactForm.js";
 
 const router = express.Router();
 // Register account route
@@ -15,6 +16,9 @@ router.put("/edit-password", editPassword);
 
 // for login route
 router.post("/login", loginAccount);
+
+// contact form (public)
+router.post("/contact", contactForm);
 
 router.get("/dashboard", protect, (req, res) => {
   res.status(200).json({
