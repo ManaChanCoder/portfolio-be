@@ -1,6 +1,7 @@
 import { Account } from "../model/accountSchema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../nodemailer/emails.js";
 
 export const registerAccount = async (req, res) => {
   const { username, password, role, email } = req.body;
@@ -24,7 +25,7 @@ export const registerAccount = async (req, res) => {
     const token = jwt.sign(
       { id: newUser._id }, // payload
       process.env.JWT_SECRET, // Secret key
-      { expiresIn: process.env.JWT_EXPIRES_IN } //1 day expiration
+      { expiresIn: process.env.JWT_EXPIRES_IN }, //1 day expiration
     );
 
     res.status(201).json({
@@ -106,7 +107,7 @@ export const loginAccount = async (req, res) => {
     const token = jwt.sign(
       { id: user._id }, // payload
       process.env.JWT_SECRET, // Secret key
-      { expiresIn: process.env.JWT_EXPIRES_IN } //1 day expiration
+      { expiresIn: process.env.JWT_EXPIRES_IN }, //1 day expiration
     );
 
     res.status(200).json({
@@ -124,6 +125,30 @@ export const loginAccount = async (req, res) => {
       });
     }
 
+    res.status(500).json({
+      success: false,
+      message: `Internal server error: ${error.message}`,
+    });
+  }
+};
+
+export const contactFormEmail = async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({
+      success: false,
+      message: "name, email, subject and message are required",
+    });
+  }
+
+  try {
+    await sendEmail(name, email, subject, message);
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
+    });
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: `Internal server error: ${error.message}`,
