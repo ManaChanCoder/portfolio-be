@@ -1,57 +1,43 @@
-// import { transporter } from "./nodemailer.setup.js";
+import { transporter } from "./nodemailer.setup.js";
 import "dotenv/config";
 import { contactFormTemplate } from "./email.template.js";
-import sgMail from "@sendgrid/mail";
+// import sgMail from "@sendgrid/mail";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// export const sendEmail = async (name, email, subject, message) => {
-//   try {
-//     const res = await transporter.sendMail({
-//       from: process.env.SMTP_USER,
-//       to: email,
-//       subject: subject,
-//       html: contactFormTemplate(name, email, subject, message),
-//       category: "Contact Form",
-//     });
-//     console.log("Email sent successfully: ", res);
-//   } catch (error) {
-//     console.error(`Error sending email: ${error}`);
-//     throw new Error("Failed to send email", error.message);
-//   }
-// };
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const sendEmail = async (name, email, subject, message) => {
   try {
-    const msg = {
-      to: email, // recipient
-      from: process.env.SMTP_USER, // verified sender
+    const res = await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
       subject: subject,
       html: contactFormTemplate(name, email, subject, message),
       category: "Contact Form",
-    };
-
-    const response = await sgMail.send(msg);
-    console.log("Email sent via SendGrid:", response);
+    });
+    console.log("Email sent successfully: ", res);
   } catch (error) {
-    console.error(
-      "SendGrid error:",
-      error.response ? error.response.body : error,
-    );
-    throw new Error(`Failed to send email: ${error.message}`);
+    console.error(`Error sending email: ${error}`);
+    throw new Error("Failed to send email", error.message);
   }
 };
 
-// (async () => {
+// export const sendEmail = async (name, email, subject, message) => {
 //   try {
-//     const info = await transporter.sendMail({
-//       from: process.env.SMTP_USER,
-//       to: process.env.SMTP_USER, // send to yourself
-//       subject: "Test Email",
-//       text: "Testing email from Render",
-//     });
-//     console.log("Email sent!", info);
-//   } catch (err) {
-//     console.error("Failed to send email:", err);
+//     const msg = {
+//       to: email, // recipient
+//       from: process.env.SMTP_USER, // verified sender
+//       subject: subject,
+//       html: contactFormTemplate(name, email, subject, message),
+//       category: "Contact Form",
+//     };
+
+//     const response = await sgMail.send(msg);
+//     console.log("Email sent via SendGrid:", response);
+//   } catch (error) {
+//     console.error(
+//       "SendGrid error:",
+//       error.response ? error.response.body : error,
+//     );
+//     throw new Error(`Failed to send email: ${error.message}`);
 //   }
-// })();
+// };
