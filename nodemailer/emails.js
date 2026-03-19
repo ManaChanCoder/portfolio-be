@@ -10,8 +10,9 @@ export const sendEmail = async (name, email, subject, message) => {
       html: contactFormTemplate(name, email, subject, message),
       category: "Contact Form",
     });
+    console.log("Email sent successfully: ", res);
   } catch (error) {
-    console.error(`Error sending email: ${error.message}`);
-    throw new Error("Failed to send email", error);
+    console.error(`Error sending email: ${error}`);
+    throw new Error("Failed to send email", error.message);
   }
 };
